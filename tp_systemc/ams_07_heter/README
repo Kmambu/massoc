@@ -1,0 +1,17 @@
+Environment variables needed :
+  export SYSTEMC=/systemc/directory
+  export SYSTEMC_AMS=/systemc_ams/directory
+
+A SOCLIB environment is necessary. If you don't have a proper installation of SOCLIB you can get one at this address : 
+https://www.soclib.fr/
+
+The files soclib.conf and soft_flags.conf should contain what the soclib-cc tool expects to compile this platform successfully.
+You can change the line "repos= ..." to change where soclib will save intermediate compile files.
+You will probably want change "arch = '..'" to specify what arch you're compiling on. 
+Soclib needs it to find systemc and systemc-ams libs.
+
+Once your environment is properly configured you will probably want type :
+  make
+  ./run.exe
+
+

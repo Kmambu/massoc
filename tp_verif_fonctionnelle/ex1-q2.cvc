@@ -1,0 +1,37 @@
+% Eercice 1 - Question 2
+a,b,c,s1,s2 : BOOLEAN;
+ASSERT (s1 <=> a XOR (b OR NOT(c)));
+ASSERT (s2 <=> NOT(a XOR (b OR c)));
+
+% a=1, b=0, c=1 => s1=0
+PUSH;
+ASSERT ((a = TRUE) AND (b = FALSE) AND (c = TRUE) AND (s1 = TRUE));
+CHECKSAT;
+COUNTEREXAMPLE;
+POP;
+
+% il existe une configuration pour laquelle s1 = s2
+PUSH;
+ASSERT (s1 = s2);
+CHECKSAT;
+COUNTEREXAMPLE;
+POP;
+
+% il existe une configuration pour laquelle s1 != s2
+PUSH;
+ASSERT NOT (s1 = s2);
+CHECKSAT;
+COUNTEREXAMPLE;
+POP;
+
+% pour toutes les configurations d'entrees s1 = s2
+PUSH;
+QUERY (s1 = s2);
+COUNTEREXAMPLE;
+POP;
+
+% pour toutes les configurations d'entrees s1 != s2
+PUSH;
+QUERY NOT (s1 = s2);
+COUNTEREXAMPLE;
+POP;
