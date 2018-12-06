@@ -1,0 +1,4 @@
+Module('rx',
+       header_files = ['rx.h',],
+       )
+

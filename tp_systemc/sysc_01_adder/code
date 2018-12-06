@@ -1,0 +1,196 @@
+#ifndef HALF_ADDER_H
+#define HALF_ADDER_H
+
+// File : half_adder.h
+#include "systemc.h"
+
+SC_MODULE(half_adder)
+{
+	sc_in<bool> a,b;
+	sc_out<bool> sum,carry;
+
+	void prc_half_adder();
+
+	SC_CTOR(half_adder) : a("a"),b("b"),sum("sum"),carry("carry")
+	{
+		SC_METHOD(prc_half_adder);
+		sensitive << a << b;
+	}
+};
+
+#endif // HALF_ADDER_H
+
+
+// File : half_adder.cpp
+#include "half_adder.h"
+
+void half_adder::prc_half_adder()
+{
+	sum = a ^ b;
+	carry = a & b;
+}
+
+// File : full_adder.h
+#ifndef FULL_ADDER_H
+#define FULL_ADDER_H
+
+#include "half_adder.h"
+
+SC_MODULE(full_adder)
+{
+	sc_in<bool> a,b,carry_in;
+	sc_out<bool> sum,carry_out;
+
+	sc_signal<bool> c1,s1,c2;
+	void prc_or();
+
+	half_adder *ha1_ptr,*ha2_ptr;
+
+	SC_CTOR(full_adder) : a("a"),b("b"),carry_in("carry_in"),
+	 			sum("sum"), carry_out("carry_out"),
+				c1("c1"),s1("s1"),c2("c2")
+	{
+		ha1_ptr=new half_adder("ha1");
+		// Named association:
+		ha1_ptr->a(a);
+		ha1_ptr->b(b);
+		ha1_ptr->sum(s1);
+		ha1_ptr->carry(c1);
+
+		ha2_ptr=new half_adder("ha2");
+		// Positional association:
+		(*ha2_ptr)(s1,carry_in,sum,c2);
+
+		SC_METHOD(prc_or);
+		sensitive << c1 << c2;
+	}
+
+	// A destructor
+	~full_adder()
+	{
+		delete ha1_ptr;
+		delete ha2_ptr;
+	}
+};
+
+#endif // FULL_ADDER_H
+
+
+// File : full_adder.cpp
+#include "full_adder.h"
+
+void full_adder::prc_or()
+{
+	carry_out = c1 | c2;
+}
+
+
+// File : full_adder_main.cpp
+#include "driver.h"
+#include "monitor.h"
+#include "full_adder.h"
+
+int sc_main(int argc,char *argv[])
+{
+	sc_signal<bool> t_a("a"), t_b("b"), t_cin("cin"), t_sum("sum"), t_cout("cout");
+
+	full_adder f1("FullAdderWithHalfAdder");
+	// Connect using positional association:
+	f1 << t_a << t_b << t_cin << t_sum << t_cout;
+
+	driver d1("GenerateWaveforms");
+	// Connect using named association:
+	d1.d_a(t_a);
+	d1.d_b(t_b);
+	d1.d_cin(t_cin);
+
+	monitor mo1("MonitorWaveforms");
+	mo1 << t_a << t_b << t_cin << t_sum << t_cout;
+
+	sc_trace_file* tfp = sc_create_vcd_trace_file("full_adder_main");
+	sc_trace(tfp, t_a, t_a.name());
+        sc_trace(tfp, t_b, t_b.name());
+        sc_trace(tfp, t_cin, t_cin.name());
+        sc_trace(tfp, t_sum, t_sum.name());
+        sc_trace(tfp, t_cout, t_cout.name());
+	sc_start(100,SC_NS);
+	sc_close_vcd_trace_file(tfp);
+
+	return 0;
+}
+
+
+// File : driver.h
+#ifndef DRIVER_H
+#define DRIVER_H
+
+#include "systemc.h"
+
+SC_MODULE(driver)
+{
+	sc_out<bool> d_a,d_b,d_cin;
+
+	void prc_driver();
+
+	SC_CTOR(driver) : d_a("d_a"),d_b("d_b"),d_cin("d_cin")
+	{
+		SC_THREAD(prc_driver);
+	}
+};
+
+#endif // DRIVER_H
+
+
+// File : driver.cpp
+#include "driver.h"
+
+void driver::prc_driver()
+{
+	sc_uint<3> pattern;
+	pattern=0;
+
+	while (1)
+	{
+		d_a=pattern[0];
+		d_b=pattern[1];
+		d_cin=pattern[2];
+		wait(5,SC_NS);
+		pattern++;
+	}
+}
+
+// File : monitor.h
+#ifndef MONITOR_H
+#define MONITOR_H
+
+#include "systemc.h"
+
+SC_MODULE(monitor)
+{
+	sc_in<bool> m_a,m_b,m_cin,m_sum,m_cout;
+
+	void prc_monitor();
+
+	SC_CTOR(monitor) : m_a("m_a"),m_b("m_b"),m_cin("m_cin"),
+		m_sum("m_sum"),m_cout("m_cout")
+	{
+		SC_METHOD(prc_monitor);
+		sensitive << m_a << m_b << m_cin << m_sum << m_cout;
+	}
+};
+
+#endif // MONITOR_H
+
+
+// File : monitor.cpp
+#include "monitor.h"
+
+void monitor::prc_monitor()
+{
+	cout << "At time " << sc_time_stamp() << "::";
+	cout << "(a, b, carry_in): ";
+	cout << m_a << m_b << m_cin;
+	cout << " (sum, carry_out): " << m_sum << m_cout << endl;
+}
+
+

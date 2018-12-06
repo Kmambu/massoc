@@ -1,0 +1,28 @@
+
+# -*- python -*-
+
+Module('caba:vci_sensor_adc',
+       classname = 'soclib::caba::VciSensorAdc',
+       tmpl_parameters = [
+	 parameter.Module('vci_param',  default = 'caba:vci_param'),
+         parameter.Int('nb_bits_decim'),
+	 ],
+       header_files = ['vci_sensor_adc.h',],
+       implementation_files = ['vci_sensor_adc.cc',],
+       ports = [
+	 Port('caba:vci_target', 'p_vci'),
+	 Port('caba:bit_in', 'p_resetn', auto = 'resetn'),
+	 Port('caba:clock_in', 'p_clk', auto = 'clock'),
+         Port('caba:bit_out', 'p_irq', auto = 'irq'),
+	 Port('caba:bit_in', 'p_clk_comparator'),
+ 	 ],
+       uses = [
+	 Uses('caba:base_module'),
+         Uses('caba:vci_sigma_delta'),
+	 ],
+       instance_parameters = [
+        parameter.IntTab('ident'),
+        parameter.Module('mt', typename = 'common:mapping_table', auto = 'env:mapping_table'),
+	],
+       )
+

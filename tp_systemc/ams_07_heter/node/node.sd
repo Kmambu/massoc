@@ -1,0 +1,31 @@
+
+# -*- python -*-
+
+Module('caba:node',
+       classname = 'node',
+       tmpl_parameters = [
+	 parameter.Module('vci_param',  default = 'caba:vci_param'),
+         parameter.Int('nb_bits_decim'),
+	 ],
+       header_files = ['node.h'],
+       ports = [
+        Port('caba:clock_in', 'p_clk', auto = 'clock'),
+        Port('caba:bit_in', 'p_resetn', auto = 'resetn'),
+        Port('caba:word_in', 'p_sensor', word_t = 'double'),
+        Port('caba:bit_out', 'p_tx'),
+        Port('caba:bit_in', 'p_rx'),
+        Port('caba:bit_out', 'p_tx_en'),
+        Port('caba:bit_in', 'p_rx_en'),
+        ],
+       uses = [
+	Uses('caba:vci_xcache_wrapper', iss_t = 'common:mips32el'),
+	Uses('caba:vci_ram'),
+	Uses('caba:vci_multi_tty'),
+	Uses('caba:vci_vgmn'),
+        Uses('caba:vci_uart'),
+        Uses('caba:vci_timer'),
+	Uses('caba:vci_sensor_adc'),
+	Uses('common:elf_file_loader'),
+        Uses('caba:base_module'),
+        ],
+       )
