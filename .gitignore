@@ -2,13 +2,21 @@
 *
 !*/
 !.gitignore
+!*README*
 
 # C/C+ sources
 !*.c
+!*.cc
 !*.cpp
+!*.h
 
-# Makefiles
-!Makefile
+# Makefiles and build scripts
+!Makefile*
+!*.conf
+!install-sh
+!bootstrap
+!configure*
+!depcomp
 
 # TEX sources and media
 !*.tex
@@ -19,3 +27,6 @@
 
 # CVC files (Equivalence Checking)
 !*.cvc
+
+# SocLib platform_descriptions
+!*platform_desc
