@@ -1,0 +1,10 @@
+a, b, c, na, nb, nc : BOOLEAN;
+%Declaration de la MAE
+ASSERT (na <=> (NOT(b) AND NOT(c)));
+ASSERT (nb <=> (c AND a AND NOT(b)));
+ASSERT (nc <=> (NOT(c) AND a AND NOT(b)));
+
+%VerifiabilitÃ©  <0,1,0> -> <0,0,0> 
+ASSERT ((a = FALSE) AND (b = TRUE) AND (c = FALSE));
+ASSERT (NOT( (na = FALSE) AND (nb = FALSE) AND (nc = FALSE)));
+CHECKSAT;

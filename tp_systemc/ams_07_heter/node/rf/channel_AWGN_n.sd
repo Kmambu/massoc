@@ -1,0 +1,4 @@
+Module('channel_AWGN_n',
+       header_files = ['channel_AWGN_n.h',],
+       )
+

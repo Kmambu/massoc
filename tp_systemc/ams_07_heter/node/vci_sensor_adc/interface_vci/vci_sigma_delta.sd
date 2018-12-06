@@ -1,0 +1,29 @@
+
+# -*- python -*-
+
+Module('caba:vci_sigma_delta',
+       classname = 'soclib::caba::VciSigmaDelta',
+       tmpl_parameters = [
+	 parameter.Module('vci_param',  default = 'caba:vci_param'),
+         parameter.Int('nb_bits_decim'),
+	 ],
+       header_files = ['vci_sigma_delta.h',],
+       interface_files = ['soclib/sigma_delta.h',],
+       implementation_files = ['vci_sigma_delta.cc',],
+       ports = [
+	 Port('caba:vci_target', 'p_vci'),
+	 Port('caba:bit_in', 'p_resetn', auto = 'resetn'),
+	 Port('caba:clock_in', 'p_clk', auto = 'clock'),
+         Port('caba:bit_out', 'p_irq', auto = 'irq'),
+	 Port('caba:word_in', 'p_sigma', word_t = 'sc_uint<10> '),
+ 	 ],
+       uses = [
+	 Uses('caba:base_module'),
+         Uses('caba:vci_target_fsm', default_target = 'true', support_llsc = 'false'),
+	 ],
+       instance_parameters = [
+        parameter.IntTab('ident'),
+        parameter.Module('mt', typename = 'common:mapping_table', auto = 'env:mapping_table'),
+	],
+       )
+

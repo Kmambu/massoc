@@ -1,0 +1,30 @@
+
+# -*- python -*-
+
+import os
+syscams = os.getenv('SYSTEMC_AMS')
+assert syscams, ValueError("Must set $SYSTEMC_AMS")
+sysc = os.getenv('SYSTEMC')
+assert sysc, ValueError("Must set $SYSTEMC")
+
+config.systemc_ams = Config(
+        base = config.systemc,
+        cflags = ['-Iinclude', 
+	       	  '-I'+sysc+'/include', 
+	          '-I'+syscams+'/include'
+		  ], 
+        libs = ['-L'+sysc+'/lib-linux', 
+	        '-L'+syscams+'/lib-linux',
+		'-lsystemc-ams', '-lsystemc', '-lm' 
+		],
+        )
+
+
+config.ams = Config(
+	base = config.default,
+	systemc = config.systemc_ams,
+	repos = "./obj/soclib-cc",
+	)
+
+
+config.default = config.ams
