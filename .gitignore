@@ -1,0 +1,21 @@
+# Remove everything, except...
+*
+!*/
+!.gitignore
+
+# C/C+ sources
+!*.c
+!*.cpp
+
+# Makefiles
+!Makefile
+
+# TEX sources and media
+!*.tex
+!*.png
+!*.jpg
+!*.jpeg
+!*.pdf
+
+# CVC files (Equivalence Checking)
+!*.cvc
