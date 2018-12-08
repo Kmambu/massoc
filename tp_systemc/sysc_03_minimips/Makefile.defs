@@ -1,7 +1,7 @@
 ## Variable that points to SystemC installation path
 
-INCDIR = -I. $(SYSTEMC_INCLUDE_DIRS)
-LIBDIR = -L. $(SYSTEMC_LIBRARY_DIRS)
+INCDIR = -I$(SYSTEMC_INCLUDE_DIRS)
+LIBDIR = -L$(SYSTEMC_LIBRARY_DIRS)
 
 LIBS   =  -lsystemc $(EXTRA_LIBS)
 
