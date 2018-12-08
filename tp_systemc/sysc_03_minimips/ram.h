@@ -25,10 +25,18 @@ SC_MODULE(ram)
 		SC_METHOD(mWrite);
 		sensitive << clk.pos();
 
+		// XOR test
+		ramContents[0]=0x2001AAAA; // ADDI r1, r0, 0xFFFF
+		ramContents[1]=0x20025555; // ADDI r2, r0, 0x5555
+		ramContents[2]=0x00221826; // OR  r3, r1, r2
+		// OR test
+		//ramContents[0]=0x2001FFFF; // ADDI r1, r0, 0xFFFF
+		//ramContents[1]=0x20020FF0; // ADDI r2, r0, 0xFF0
+		//ramContents[2]=0x00221825; // OR  r3, r1, r2
 		// AND test
-		ramContents[0]=0x2001FFFF; // ADDI r1, r0, 0xFFFF
-		ramContents[1]=0x20020FF0; // ADDI r2, r0, 0xFF0
-		ramContents[2]=0x00221824; // AND  r3, r1, r2
+		//ramContents[0]=0x2001FFFF; // ADDI r1, r0, 0xFFFF
+		//ramContents[1]=0x2002FFFF; // ADDI r2, r0, 0xFF0
+		//ramContents[2]=0x00221824; // AND  r3, r1, r2
 		// BEQ test
 		//ramContents[0]=0x10000001; // BEQ  r0, r0, 0x8
 		//ramContents[1]=0x20010000; // ADDI r1, r0, 0x0

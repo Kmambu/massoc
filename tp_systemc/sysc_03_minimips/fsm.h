@@ -36,8 +36,9 @@ using namespace std;
 
 #define ALU_OP_AND	0
 #define ALU_OP_ADD	2
+#define ALU_OP_XOR	3
 #define ALU_OP_SUB	6
-#define ALU_OP_OR	7
+#define ALU_OP_OR	  7
 
 #define S_RESET 0
 #define S_PCPLUS4 1
@@ -57,6 +58,10 @@ using namespace std;
 #define S_BEQ3  15
 #define S_AND1  16
 #define S_AND2  17
+#define S_OR1   18
+#define S_OR2   19
+#define S_XOR1  20
+#define S_XOR2  21
 
 SC_MODULE(fsm)
 {
@@ -125,6 +130,10 @@ SC_MODULE(fsm)
 						next_state=S_ADD1;
 					if ((int)ir_value.range(5,0)==FUNC_AND)
 						next_state=S_AND1;
+					if ((int)ir_value.range(5,0)==FUNC_OR )
+						next_state=S_OR1;
+					if ((int)ir_value.range(5,0)==FUNC_XOR)
+						next_state=S_XOR1;
 				}
 				break;
 			case S_LW1: //2
@@ -162,9 +171,23 @@ SC_MODULE(fsm)
 				break;
 
 			case S_AND1:
-				next_state=S_ADD2;
+				next_state=S_AND2;
 				break;
 			case S_AND2:
+				next_state=S_PCPLUS4;
+				break;
+
+			case S_XOR1:
+				next_state=S_XOR2;
+				break;
+			case S_XOR2:
+				next_state=S_PCPLUS4;
+				break;
+
+			case S_OR1:
+				next_state=S_OR2;
+				break;
+			case S_OR2:
 				next_state=S_PCPLUS4;
 				break;
 
@@ -343,6 +366,68 @@ SC_MODULE(fsm)
 				memrw=MEMREAD;
 				break;
 
+			case S_OR1: // AD <- RS
+				write_pc=0;
+				mux_rf_w=W_RT;
+				write_rf=0;
+				mux_rf_r=R_RS;
+				write_ad=1;
+				write_dt=0;
+				write_ir=0;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_CST0;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_OR;
+				memrw=MEMNOP;
+				break;
+
+			case S_OR2:  // RD <- AD | RT
+				           // IR <- MEM[PC]
+				write_pc=0;
+				mux_rf_w=W_RD;
+				write_rf=1;
+				mux_rf_r=R_RT;
+				write_ad=0;
+				write_dt=0;
+				write_ir=1;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_AD;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_OR;
+				memrw=MEMREAD;
+				break;
+
+			case S_XOR1: // AD <- RS
+				write_pc=0;
+				mux_rf_w=W_RT;
+				write_rf=0;
+				mux_rf_r=R_RS;
+				write_ad=1;
+				write_dt=0;
+				write_ir=0;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_CST0;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_ADD;
+				memrw=MEMNOP;
+				break;
+
+			case S_XOR2: // RD <- AD & RT
+				           // IR <- MEM[PC]
+				write_pc=0;
+				mux_rf_w=W_RD;
+				write_rf=1;
+				mux_rf_r=R_RT;
+				write_ad=0;
+				write_dt=0;
+				write_ir=1;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_AD;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_XOR;
+				memrw=MEMREAD;
+				break;
+
 			case S_AND1: // AD <- RS
 				write_pc=0;
 				mux_rf_w=W_RT;
@@ -354,7 +439,7 @@ SC_MODULE(fsm)
 				mux_x=MUX_X_RF;
 				mux_y=MUX_Y_CST0;
 				mux_addr=MUX_ADDR_PC;
-				alu_op=ALU_OP_AND;
+				alu_op=ALU_OP_ADD;
 				memrw=MEMNOP;
 				break;
 
