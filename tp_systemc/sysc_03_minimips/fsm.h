@@ -46,10 +46,14 @@ using namespace std;
 #define S_SW1 5
 #define S_SW2 6
 #define S_SW3 7
-#define S_ADDI1 8
-#define S_ADDI2 9 
-#define S_ADD1 10
-#define S_ADD2 11 
+#define S_ADDI1  8
+#define S_ADDI2  9 
+#define S_ADD1  10
+#define S_ADD2  11 
+#define S_BEQ1  12
+#define S_BEQ2  13
+#define S_BEQ21 13
+#define S_BEQ3  14
 
 SC_MODULE(fsm)
 {
@@ -102,12 +106,16 @@ SC_MODULE(fsm)
 				next_state=S_PCPLUS4;
 				break;
 			case S_PCPLUS4: // 1
+				// Standard OPcodes
 				if ((int)ir_value.range(31,26)==OP_LW)
 					next_state=S_LW1;
 				else if ((int)ir_value.range(31,26)==OP_SW)
 					next_state=S_SW1;
 				else if ((int)ir_value.range(31,26)==OP_ADDI)
 					next_state=S_ADDI1;
+				else if ((int)ir_value.range(31,26)==OP_BEQ)
+					next_state=S_BEQ1;
+				// SPECIAL OPcodes
 				else if ((int)ir_value.range(31,26)==OP_SPECIAL)
 				{
 					if ((int)ir_value.range(5,0)==FUNC_ADD)
@@ -142,6 +150,18 @@ SC_MODULE(fsm)
 				next_state=S_ADD2;
 				break;
 			case S_ADD2:
+				next_state=S_PCPLUS4;
+				break;
+			case S_BEQ1:
+				next_state=S_BEQ2;
+			case S_BEQ2:
+				if (zero.read()) next_state=S_BEQ21;
+				else             next_state=S_BEQ3;
+				break;
+			case S_BEQ21:
+				next_state=S_BEQ3;
+				break;
+			case S_BEQ3:
 				next_state=S_PCPLUS4;
 				break;
 			default:
@@ -334,6 +354,68 @@ SC_MODULE(fsm)
 				mux_y=MUX_Y_AD;
 				mux_addr=MUX_ADDR_PC;
 				alu_op=ALU_OP_ADD;
+				memrw=MEMREAD;
+				break;
+
+			case S_BEQ1: // AD <- RS
+				write_pc=0;
+				mux_rf_w=W_RD;
+				write_rf=0;
+				mux_rf_r=R_RS;
+				write_ad=1;
+				write_dt=0;
+				write_ir=0;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_CST0;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_ADD;
+				memrw=MEMNOP;
+				break;
+
+			case S_BEQ2: // AD <- RT - AD
+				write_pc=0;
+				mux_rf_w=W_RD;
+				write_rf=0;
+				mux_rf_r=R_RT;
+				write_ad=1;
+				write_dt=0;
+				write_ir=0;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_AD;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_SUB;
+				memrw=MEMNOP;
+				break;
+
+			case S_BEQ21: // The case where RS = RT
+				            // PC <- PC + (IR << 2)
+				write_pc=1;
+				mux_rf_w=W_RD;
+				write_rf=0;
+				mux_rf_r=R_RT;
+				write_ad=0;
+				write_dt=0;
+				write_ir=0;
+				mux_x=MUX_X_PC;
+				mux_y=MUX_Y_SHF2;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_SUB;
+				memrw=MEMNOP;
+				break;
+			default:
+
+			case S_BEQ3 : // IR <- MEM[PC]
+				write_pc=0;
+				mux_rf_w=W_RD;
+				write_rf=0;
+				mux_rf_r=R_RT;
+				write_ad=0;
+				write_dt=0;
+				write_ir=1;
+				mux_x=MUX_X_PC;
+				mux_y=MUX_Y_SHF2;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_SUB;
 				memrw=MEMREAD;
 				break;
 			default:
