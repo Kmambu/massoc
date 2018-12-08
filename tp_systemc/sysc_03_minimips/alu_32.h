@@ -36,6 +36,12 @@ SC_MODULE(alu_32)
 			case 2:
 				result = opA + opB ;
 				break;
+			// It will lengthen the combinational datapath indeed,
+			// but I believe this addition will prove itself to be
+			// beneficial regaridng logical operations
+			case 3:
+				result = opA ^ opB ;
+				break;
 			case 6:
 				result = opA - opB ;
 				break;
