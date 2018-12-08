@@ -25,9 +25,15 @@ SC_MODULE(ram)
 		SC_METHOD(mWrite);
 		sensitive << clk.pos();
 
-		ramContents[0]=0x20010001;
-		ramContents[1]=0x20020002;
-		ramContents[2]=0x00221820;
+		// BEQ test
+		ramContents[0]=0x10000001;
+		ramContents[1]=0x20010000;
+		ramContents[2]=0x2001FFFF;
+		// ADD test
+		//ramContents[0]=0x20010001;
+		//ramContents[1]=0x20020002;
+		//ramContents[2]=0x00221820;
+		// Vanilla test
 		//ramContents[0]=0x20010080;
 		//ramContents[1]=0x8C220000;
 		//ramContents[2]=0x8C230004;

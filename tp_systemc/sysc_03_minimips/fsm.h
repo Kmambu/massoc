@@ -52,8 +52,8 @@ using namespace std;
 #define S_ADD2  11 
 #define S_BEQ1  12
 #define S_BEQ2  13
-#define S_BEQ21 13
-#define S_BEQ3  14
+#define S_BEQ21 14
+#define S_BEQ3  15
 
 SC_MODULE(fsm)
 {
@@ -154,6 +154,7 @@ SC_MODULE(fsm)
 				break;
 			case S_BEQ1:
 				next_state=S_BEQ2;
+				break;
 			case S_BEQ2:
 				if (zero.read()) next_state=S_BEQ21;
 				else             next_state=S_BEQ3;
@@ -399,10 +400,9 @@ SC_MODULE(fsm)
 				mux_x=MUX_X_PC;
 				mux_y=MUX_Y_SHF2;
 				mux_addr=MUX_ADDR_PC;
-				alu_op=ALU_OP_SUB;
+				alu_op=ALU_OP_ADD;
 				memrw=MEMNOP;
 				break;
-			default:
 
 			case S_BEQ3 : // IR <- MEM[PC]
 				write_pc=0;
