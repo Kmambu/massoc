@@ -5,7 +5,8 @@
 #define OP_SW	43
 #define OP_ADDI	8
 #define OP_SPECIAL	0
-#define FUNC_SUB 	34	
+#define FUNC_ADD   32
+#define FUNC_SUB 	 34
 #define OP_BEQ	4
 #define OP_BNE	5
 
