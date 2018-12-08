@@ -42,6 +42,10 @@ SC_MODULE(alu_32)
 			case 3:
 				result = opA ^ opB ;
 				break;
+			// A NOR-Gate is only 2T, will not be longer than the XOR
+			case 4:
+				result = ~(opA | opB);
+				break;
 			case 6:
 				result = opA - opB ;
 				break;
