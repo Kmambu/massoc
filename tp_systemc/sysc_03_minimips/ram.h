@@ -25,11 +25,14 @@ SC_MODULE(ram)
 		SC_METHOD(mWrite);
 		sensitive << clk.pos();
 
-		ramContents[0]=0x20010080;
-		ramContents[1]=0x8C220000;
-		ramContents[2]=0x8C230004;
-		ramContents[32]=0x00000001;
-		ramContents[33]=0x00000002;
+		ramContents[0]=0x20010001;
+		ramContents[1]=0x20020002;
+		ramContents[2]=0x00221820;
+		//ramContents[0]=0x20010080;
+		//ramContents[1]=0x8C220000;
+		//ramContents[2]=0x8C230004;
+		//ramContents[32]=0x00000001;
+		//ramContents[33]=0x00000002;
 	}
 
 	void mRead()
