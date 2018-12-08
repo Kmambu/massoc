@@ -174,18 +174,18 @@ SC_MODULE(cpu)
 		mux_a_1->COM(mux_x);
 		mux_a_1->S(mux_x_out);
 
-                // MUX81_32 pour b
-                mux_b_1=new mux81_32("mux_b_1");
-                mux_b_1->IN0(cst0out);
-                mux_b_1->IN1(cst4out);
-                mux_b_1->IN2(adout);
-                mux_b_1->IN3(irextout);
-                mux_b_1->IN4(irshiftout);
-                mux_b_1->IN5(irsextout);
-                mux_b_1->IN6(cst0out);
-                mux_b_1->IN7(cst0out);
-                mux_b_1->COM(mux_y);
-                mux_b_1->S(mux_y_out);
+		// MUX81_32 pour b
+		mux_b_1=new mux81_32("mux_b_1");
+		mux_b_1->IN0(cst0out);
+		mux_b_1->IN1(cst4out);
+		mux_b_1->IN2(adout);
+		mux_b_1->IN3(irextout);
+		mux_b_1->IN4(irshiftout);
+		mux_b_1->IN5(irsextout);
+		mux_b_1->IN6(cst0out);
+		mux_b_1->IN7(cst0out);
+		mux_b_1->COM(mux_y);
+		mux_b_1->S(mux_y_out);
 
 		// MUX21_32 pour le PC et ALUOUT
 		mux_addr_1=new mux21_32("mux_addr_1");
