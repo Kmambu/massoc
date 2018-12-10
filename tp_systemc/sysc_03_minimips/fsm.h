@@ -37,6 +37,7 @@ using namespace std;
 #define ALU_OP_AND	0
 #define ALU_OP_ADD	2
 #define ALU_OP_XOR	3
+#define ALU_OP_NOR	4
 #define ALU_OP_SUB	6
 #define ALU_OP_OR	  7
 
@@ -62,6 +63,8 @@ using namespace std;
 #define S_OR2   19
 #define S_XOR1  20
 #define S_XOR2  21
+#define S_NOR1  22
+#define S_NOR2  23
 
 SC_MODULE(fsm)
 {
@@ -134,6 +137,8 @@ SC_MODULE(fsm)
 						next_state=S_OR1;
 					if ((int)ir_value.range(5,0)==FUNC_XOR)
 						next_state=S_XOR1;
+					if ((int)ir_value.range(5,0)==FUNC_NOR)
+						next_state=S_NOR1;
 				}
 				break;
 			case S_LW1: //2
@@ -174,6 +179,13 @@ SC_MODULE(fsm)
 				next_state=S_AND2;
 				break;
 			case S_AND2:
+				next_state=S_PCPLUS4;
+				break;
+
+			case S_NOR1:
+				next_state=S_NOR2;
+				break;
+			case S_NOR2:
 				next_state=S_PCPLUS4;
 				break;
 
@@ -394,6 +406,37 @@ SC_MODULE(fsm)
 				mux_y=MUX_Y_AD;
 				mux_addr=MUX_ADDR_PC;
 				alu_op=ALU_OP_OR;
+				memrw=MEMREAD;
+				break;
+
+			case S_NOR1: // AD <- RS
+				write_pc=0;
+				mux_rf_w=W_RT;
+				write_rf=0;
+				mux_rf_r=R_RS;
+				write_ad=1;
+				write_dt=0;
+				write_ir=0;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_CST0;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_ADD;
+				memrw=MEMNOP;
+				break;
+
+			case S_NOR2: // RD <- AD & RT
+				           // IR <- MEM[PC]
+				write_pc=0;
+				mux_rf_w=W_RD;
+				write_rf=1;
+				mux_rf_r=R_RT;
+				write_ad=0;
+				write_dt=0;
+				write_ir=1;
+				mux_x=MUX_X_RF;
+				mux_y=MUX_Y_AD;
+				mux_addr=MUX_ADDR_PC;
+				alu_op=ALU_OP_NOR;
 				memrw=MEMREAD;
 				break;
 

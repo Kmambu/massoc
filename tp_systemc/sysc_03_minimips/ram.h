@@ -26,9 +26,11 @@ SC_MODULE(ram)
 		sensitive << clk.pos();
 
 		// XOR test
-		ramContents[0]=0x2001AAAA; // ADDI r1, r0, 0xFFFF
-		ramContents[1]=0x20025555; // ADDI r2, r0, 0x5555
-		ramContents[2]=0x00221826; // OR  r3, r1, r2
+		ramContents[0]=0x00221827; // NOR r3, r1, r2
+		// XOR test
+		//ramContents[0]=0x2001AAAA; // ADDI r1, r0, 0xFFFF
+		//ramContents[1]=0x20025555; // ADDI r2, r0, 0x5555
+		//ramContents[2]=0x00221826; // OR  r3, r1, r2
 		// OR test
 		//ramContents[0]=0x2001FFFF; // ADDI r1, r0, 0xFFFF
 		//ramContents[1]=0x20020FF0; // ADDI r2, r0, 0xFF0
